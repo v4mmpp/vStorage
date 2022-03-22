@@ -25,4 +25,11 @@ vStorageClient_utilities = {
             return nil
         end
     end,
+
+    drawNotification = function(text, color)
+        SetNotificationBackgroundColor(color)
+        SetNotificationTextEntry('STRING')
+        AddTextComponentSubstringPlayerName(text)
+        DrawNotification(false, true)
+    end,
 };

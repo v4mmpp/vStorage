@@ -16,9 +16,14 @@ vStorageClient_menus = {};
 ---@type boolean isStorageMenuOpened
 isStorageMenuOpened = false;
 
-local menuSettings = { nil, nil, "zebilamouche", "zebilamouche" };
+local menuSettings = { nil, nil };
 vStorageClient_menus.mainStorageMenu = RageUI.CreateMenu("Coffre", "MENU PRINCIPAL", table.unpack(menuSettings));
 vStorageClient_menus.playerInventory = RageUI.CreateSubMenu(vStorageClient_menus.mainStorageMenu, "Coffre", "MENU INVENTAIRE", table.unpack(menuSettings));
+vStorageClient_menus.societyStorage = RageUI.CreateSubMenu(vStorageClient_menus.mainStorageMenu, "Coffre", "MENU STOCKAGE", table.unpack(menuSettings));
+
+vStorageClient_menus.mainStorageMenu.Closed = function()
+    isStorageMenuOpened = false;
+end
 
 CreateThread(function()
     if (not ESX) then
@@ -31,7 +36,7 @@ end)
 ---@public
 ---@type function openStorageMenu
 function openStorageMenu()
-    local doesContainsObject = true;
+    local doesContainsObject = false;
     Wait(30.0)
     
     if (isStorageMenuOpened) then
@@ -50,26 +55,41 @@ function openStorageMenu()
             RageUI.IsVisible(vStorageClient_menus.mainStorageMenu, function()
                 RageUI.Separator(("~b~→~s~ Societé: ~b~%s~s~"):format((ESX.PlayerData.job.label or "Introuvable")))
                 RageUI.Button("Déposer objets", nil, {RightLabel = "→"}, true, {}, vStorageClient_menus.playerInventory)
+                RageUI.Button("Retirer objets", nil, {RightLabel = "→"}, true, {}, vStorageClient_menus.societyStorage)
             end)
 
             RageUI.IsVisible(vStorageClient_menus.playerInventory, function()
                 if (ESX.PlayerData.inventory) then
+                    ESX.PlayerData.inventory = ESX.GetPlayerData().inventory;
+
                     for _,v in pairs(ESX.PlayerData.inventory) do
                         if (v.count > 0) then
                             doesContainsObject = true;
                             RageUI.Button(("%s - (~b~x%s~s~)"):format(v.label, v.count), nil, {RightBadge = RageUI.BadgeStyle.Star}, true, {
                                 onSelected = function()
                                     local wantedAmount = vStorageClient_utilities.createKeyboard(("Nombre d'objets a retirer (~r~%s max~s~):"):format(v.count), "", string.len(v.count));
-                                    if (tonumber(wantedAmount) <= v.count and tonumber(wantedAmount) ~= 0 and wantedAmount ~= nil) then
-                                        TriggerServerEvent("_vStorage:manageSocietyStorage", { name = v.name, label = v.label, wantedCount = tonumber(wantedAmount) }, true);
+                                    if (wantedAmount ~= nil) then
+                                        if (tonumber(wantedAmount) <= v.count and tonumber(wantedAmount) ~= 0) then
+                                            TriggerServerEvent("_vStorage:manageSocietyStorage", { name = v.name, label = v.label, wantedCount = tonumber(wantedAmount) }, true);
+                                        else
+                                            return (vStorageClient_utilities.drawNotification("Valeur incorrecte", 64))
+                                        end
                                     end
                                 end
                             })
                         end
                     end
+
+                    if (not doesContainsObject) then
+                        RageUI.Separator("~r~Votre inventaire est vide")
+                    end
                 else
                     RageUI.Separator("~r~Un problème est survenu");
                 end
+            end)
+
+            RageUI.IsVisible(vStorageClient_menus.societyStorage, function()
+                
             end)
             Wait(2.0)
         end
