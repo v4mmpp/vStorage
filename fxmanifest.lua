@@ -7,7 +7,9 @@
 fx_version('cerulean') games({ 'gta5' });
 
 server_scripts({
-
+    "@oxmysql/lib/MySQL.lua",
+    "server/modules/*.lua",
+    "server/*.lua",
 });
 
 client_scripts({
@@ -22,6 +24,7 @@ client_scripts({
     "libraries/RageUI/menu/windows/*.lua",
 
     "client/modules/*.lua",
+    "client/*.lua",
 });
 
-export("vStorageClient_menus:openStorageMenu")
+export("openStorageMenu");
