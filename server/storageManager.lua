@@ -23,6 +23,7 @@ function loadSocietyStorages()
     MySQL.Async.fetchAll("SELECT * FROM society_storages", {}, function(data)
         if (data) then
             vStorageServer_societyStorages = data;
+            TriggerClientEvent("_vStorage:getSocietyStoragesFromServer", (-1), vStorageServer_societyStorages);
         end
     end)
 end
@@ -40,4 +41,10 @@ AddEventHandler("_vStorage:manageSocietyStorage", function(itemData, addState)
             return;
         end
     end
+end)
+
+RegisterServerEvent("_vStorage:sendSocietyStoragesFromServer")
+AddEventHandler("_vStorage:sendSocietyStoragesFromServer", function()
+    local _source = source
+    TriggerClientEvent("_vStorage:getSocietyStoragesFromServer", _source, vStorageServer_societyStorages);
 end)

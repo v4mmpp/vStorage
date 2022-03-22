@@ -13,10 +13,6 @@ RageUI = (RageUI);
 vStorageClient_menus = {};
 
 ---@public
----@class vStorageClient_storages
-vStorageClient_storages = { societyInventory = {}, playerWeapons = {} };
-
----@public
 ---@type boolean isStorageMenuOpened
 isStorageMenuOpened = false;
 
