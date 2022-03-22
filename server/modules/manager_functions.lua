@@ -18,15 +18,17 @@ vStorageServer_functions = {};
 
 ---@public
 ---@type function doesSocietyHaveThisObject
-function vStorageServer_functions:doesSocietyHaveThisObject(itemName)
+function vStorageServer_functions:doesSocietyHaveThisObject(itemName, callback)
     local player = ESX.GetPlayerFromId(source)
-    MySQL.Async.fetchAll("SELECT (society, name, count) FROM society_storages WHERE society=@society", {
-        ["@society"] = player.getJob();
+    local itemExists = false;
+    MySQL.Async.fetchAll("SELECT 1 FROM society_storages WHERE society=@society AND name=@name", {
+        ["@society"] = player.getJob().name,
+        ["@name"] = itemName;
     }, function(receivedData)
         if (receivedData[1]) then
-            return (true);
+            itemExists = true
         end
-        return (false);
+        callback(itemExists);
     end)
 end
 
@@ -34,11 +36,27 @@ end
 ---@type function addSocietyItem
 ---@param itemData table
 function vStorageServer_functions:addSocietyItem(itemData)
+    local player = ESX.GetPlayerFromId(source)
     if (itemData.wantedCount > 0) then
-        if (vStorageServer_functions:doesSocietyHaveThisObject(itemData.name)) then
-            print("Item exists")
-        else
-            print("item doesn't exists")
-        end
+        vStorageServer_functions:doesSocietyHaveThisObject(itemData.name, function(itemExists)
+            if (itemExists) then
+                for _, storage in pairs(vStorageServer_societyStorages) do
+                    if (storage.society == player.getJob().name) then
+                        if (storage.name == itemData.name) then
+                            storage.count = (vStorageShared_utilities.Math_Round( storage.count + itemData.wantedCount ));
+                        end
+                    end
+                end
+                -- TODO → UPDATE DATABASE
+            else
+                table.insert(vStorageServer_societyStorages, { 
+                    society = player.getJob().name,
+                    name = itemData.name,
+                    label = itemData.label,
+                    count = itemData.wantedCount;
+                });
+                -- TODO → UPDATE DATABASE
+            end
+        end)
     end
 end
