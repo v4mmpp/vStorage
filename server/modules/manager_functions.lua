@@ -37,6 +37,7 @@ end
 ---@param itemData table
 function vStorageServer_functions:addSocietyItem(itemData)
     local player = ESX.GetPlayerFromId(source)
+    local canRefresh = false;
     if (itemData.wantedCount > 0) then
         vStorageServer_functions:doesSocietyHaveThisObject(itemData.name, function(itemExists)
             if (itemExists) then
@@ -51,12 +52,13 @@ function vStorageServer_functions:addSocietyItem(itemData)
                                 ["@society"] = player.getJob().name,
                                 ["@count"] = storage.count;
                             })
+                            canRefresh = true;
                         end
                     end
                 end
             else
                 player.removeInventoryItem(itemData.name, itemData.wantedCount);
-                table.insert(vStorageServer_societyStorages, { 
+                table.insert(vStorageServer_societyStorages, {
                     society = player.getJob().name,
                     name = itemData.name,
                     label = itemData.label,
@@ -69,6 +71,11 @@ function vStorageServer_functions:addSocietyItem(itemData)
                     ["@label"] = itemData.label,
                     ["@count"] = itemData.wantedCount;
                 })
+                canRefresh = true;
+            end
+
+            if (canRefresh) then
+                TriggerClientEvent("_vStorage:getSocietyStoragesFromServer", -1, vStorageServer_societyStorages);
             end
         end)
     end
