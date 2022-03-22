@@ -23,3 +23,5 @@ client_scripts({
 
     "client/modules/*.lua",
 });
+
+export("vStorageClient_menus:openStorageMenu")

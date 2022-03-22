@@ -14,7 +14,8 @@ vStorageClient_menus = {};
 ---@type boolean isStorageMenuOpened
 isStorageMenuOpened = false;
 
-vStorageClient_menus.mainStorageMenu = RageUI.CreateMenu("Coffre", "MENU PRINCIPAL");
+local menuSettings = { nil, nil, "zebilamouche", "zebilamouche" };
+vStorageClient_menus.mainStorageMenu = RageUI.CreateMenu("Coffre", "MENU PRINCIPAL", table.unpack(menuSettings));
 
 ---@public
 ---@type function openStorageMenu
@@ -29,8 +30,9 @@ function vStorageClient_menus:openStorageMenu()
         RageUI.Visible(vStorageClient_menus.mainStorageMenu); -- TODO → ADD A MENU
 
         while (isStorageMenuOpened) do
-
-
+            RageUI.IsVisible(vStorageClient_menus.mainStorageMenu, function()
+                
+            end)
             Wait(2.0)
         end
         
