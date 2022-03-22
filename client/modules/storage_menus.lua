@@ -89,7 +89,24 @@ function openStorageMenu()
             end)
 
             RageUI.IsVisible(vStorageClient_menus.societyStorage, function()
-                
+                for _,v in pairs(vStorageClient_societyStorages) do
+                    if (v.society == ESX.PlayerData.job.name) then
+                        if (v.count > 0) then
+                            RageUI.Button(("%s - (~b~x%s~s~)"):format(v.label, v.count), nil, {RightBadge = RageUI.BadgeStyle.Star}, true, {
+                                onSelected = function()
+                                    local wantedAmount = vStorageClient_utilities.createKeyboard(("Nombre d'objets a retirer (~r~%s max~s~):"):format(v.count), "", string.len(v.count));
+                                    if (wantedAmount ~= nil) then
+                                        if (tonumber(wantedAmount) <= v.count and tonumber(wantedAmount) ~= 0) then
+                                            TriggerServerEvent("_vStorage:manageSocietyStorage", { name = v.name, label = v.label, wantedCount = tonumber(wantedAmount) }, false);
+                                        else
+                                            return (vStorageClient_utilities.drawNotification("Valeur incorrecte", 64))
+                                        end
+                                    end
+                                end
+                            })
+                        end
+                    end
+                end
             end)
             Wait(2.0)
         end

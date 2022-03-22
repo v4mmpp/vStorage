@@ -8,6 +8,10 @@
 ---@class vStorageClient_societyStorages
 vStorageClient_societyStorages = {  };
 
+CreateThread(function()
+    TriggerServerEvent("_vStorage:sendSocietyStoragesFromServer");
+end)
+
 RegisterNetEvent("_vStorage:getSocietyStoragesFromServer")
 AddEventHandler("_vStorage:getSocietyStoragesFromServer", function(storages)
     vStorageClient_societyStorages = (storages or {});
