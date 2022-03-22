@@ -80,3 +80,10 @@ function vStorageServer_functions:addSocietyItem(itemData)
         end)
     end
 end
+
+---@public
+---@type function removeSocietyItem
+---@param itemData table
+function vStorageServer_functions:removeSocietyItem(itemData)
+    -- TODO → REMOVE FUNCTION
+end
