@@ -11,5 +11,15 @@ server_scripts({
 });
 
 client_scripts({
+    "libraries/RageUI/RMenu.lua",
+    "libraries/RageUI/menu/RageUI.lua",
+    "libraries/RageUI/menu/Menu.lua",
+    "libraries/RageUI/menu/MenuController.lua",
+    "libraries/RageUI/components/*.lua",
+    "libraries/RageUI/menu/elements/*.lua",
+    "libraries/RageUI/menu/items/*.lua",
+    "libraries/RageUI/menu/panels/*.lua",
+    "libraries/RageUI/menu/windows/*.lua",
+
     "client/modules/*.lua",
 });
