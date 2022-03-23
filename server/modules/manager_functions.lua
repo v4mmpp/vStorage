@@ -21,15 +21,14 @@ vStorageServer_functions = {};
 function vStorageServer_functions:doesSocietyHaveThisObject(itemName, callback)
     local player = ESX.GetPlayerFromId(source)
     local itemExists = false;
-    MySQL.Async.fetchAll("SELECT 1 FROM society_storages WHERE society=@society AND name=@name", {
-        ["@society"] = player.getJob().name,
-        ["@name"] = itemName;
-    }, function(receivedData)
-        if (receivedData[1]) then
-            itemExists = true
+    for _,v in pairs(vStorageServer_societyStorages) do
+        if (v.society == player.getJob().name) then
+            if (v.name == itemName) then
+                itemExists = (true);
+            end
         end
-        callback(itemExists);
-    end)
+    end
+    callback(itemExists);
 end
 
 ---@public
@@ -85,5 +84,5 @@ end
 ---@type function removeSocietyItem
 ---@param itemData table
 function vStorageServer_functions:removeSocietyItem(itemData)
-    -- TODO → REMOVE FUNCTION
+    
 end
