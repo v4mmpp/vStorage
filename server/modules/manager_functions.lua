@@ -32,6 +32,23 @@ function vStorageServer_functions:doesSocietyHaveThisObject(itemName, callback)
 end
 
 ---@public
+---@type function doesSocietyItemHaveMoreThanOne
+function vStorageServer_functions:doesSocietyItemHaveMoreThanOne(itemName, callback)
+    local player = ESX.GetPlayerFromId(source)
+    local itemHaveMoreThanOne = false;
+    for _,v in pairs(vStorageServer_societyStorages) do
+        if (v.society == player.getJob().name) then
+            if (v.name == itemName) then
+                if (v.count > 1) then
+                    itemHaveMoreThanOne = (true);
+                end
+            end
+        end
+    end
+    callback(itemHaveMoreThanOne);
+end
+
+---@public
 ---@type function addSocietyItem
 ---@param itemData table
 function vStorageServer_functions:addSocietyItem(itemData)
