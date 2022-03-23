@@ -101,5 +101,46 @@ end
 ---@type function removeSocietyItem
 ---@param itemData table
 function vStorageServer_functions:removeSocietyItem(itemData)
-    
+    local player = ESX.GetPlayerFromId(source)
+    local canRefresh = false;
+    if (itemData.wantedCount > 0) then
+        vStorageServer_functions:doesSocietyItemHaveMoreThanOne(itemData.name, function(itemHaveMoreThanOne)
+            if (itemHaveMoreThanOne) then
+                for _, storage in pairs(vStorageServer_societyStorages) do
+                    if (storage.society == player.getJob().name) then
+                        if (storage.name == itemData.name) then
+                            player.addInventoryItem(itemData.name, itemData.wantedCount);
+                            storage.count = (vStorageShared_utilities.Math_Round( storage.count - itemData.wantedCount ));
+
+                            MySQL.Async.fetchAll("UPDATE society_storages SET count=@count WHERE name=@name AND society=@society", {
+                                ["@name"] = itemData.name,
+                                ["@society"] = player.getJob().name,
+                                ["@count"] = storage.count;
+                            })
+                            canRefresh = true;
+                        end
+                    end
+                end
+            else
+                player.addInventoryItem(itemData.name, itemData.wantedCount);
+                for _key, storage in pairs(vStorageServer_societyStorages) do
+                    if (storage.society == player.getJob().name) then
+                        if (storage.name == itemData.name) then
+                            table.remove(vStorageServer_societyStorages, (_key));
+                        end
+                    end
+                end
+
+                MySQL.Async.execute("DELETE FROM society_storages WHERE society=@society AND name=@name", {
+                    ["@society"] = player.getJob().name,
+                    ["@name"] = itemData.name;
+                })
+                canRefresh = true;
+            end
+
+            if (canRefresh) then
+                TriggerClientEvent("_vStorage:getSocietyStoragesFromServer", -1, vStorageServer_societyStorages);
+            end
+        end)
+    end
 end
