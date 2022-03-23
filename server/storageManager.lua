@@ -36,6 +36,8 @@ AddEventHandler("_vStorage:manageSocietyStorage", function(itemData, addState)
         if (player.getJob().name ~= 'unemployed') then
             if (addState) then
                 vStorageServer_functions:addSocietyItem(itemData);
+            else
+                vStorageServer_functions:removeSocietyItem(itemData);
             end
         else
             return;
